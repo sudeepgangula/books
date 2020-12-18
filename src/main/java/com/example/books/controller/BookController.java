@@ -1,5 +1,6 @@
 package com.example.books.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,36 +15,36 @@ import com.example.books.entities.Book;
 import com.example.books.service.BookService;
 
 @RestController
-@RequestMapping("/books")
 public class BookController {
 
 	@Autowired
 	BookService bookService;
 
-	@GetMapping("/all")
-	public List<Book> getAllBooks() {
-		return bookService.getAllBooks();
+	List<Book> list = new ArrayList<Book>();
+
+	@GetMapping("/books")
+	public List<Book> getAllBooks(@RequestParam String bookName, @RequestParam Long bookId) {
+		if (null != bookId) {
+			list.add( bookService.getBook(bookId));
+			return list;
+		} else if (null != bookName) {
+			list.add(bookService.getBook(bookName));
+			return list;
+		} else {
+			return bookService.getAllBooks();
+		}
 	}
 
-	@PostMapping("/add")
+	@PostMapping("/addBook")
 	public void addBook(@RequestBody Book book) {
 		bookService.addBook(book);
 	}
 
-	@PostMapping("/update")
+	@PostMapping("/updateBook")
 	public void updateBook(@RequestBody Book book) {
 		bookService.updateBook(book);
 	}
 
-	@GetMapping("/name")
-	public Book getBook(@RequestParam String bookName) {
-		return bookService.getBook(bookName);
-	}
-
-	@GetMapping("/id")
-	public Book getBook(@RequestParam Long bookId) {
-		return bookService.getBook(bookId);
-	}
 
 	@GetMapping("/availableBooks")
 	public List<Book> getAvailableBooks() {
@@ -61,7 +61,7 @@ public class BookController {
 		bookService.allocateBook(bookId);
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/books")
 	public void deleteBook(@RequestParam Long bookId) {
 		bookService.deleteBook(bookId);
 	}
