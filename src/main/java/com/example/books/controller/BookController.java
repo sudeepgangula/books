@@ -20,10 +20,11 @@ public class BookController {
 	@Autowired
 	BookService bookService;
 
-	List<Book> list = new ArrayList<Book>();
-
 	@GetMapping("/books")
-	public List<Book> getAllBooks(@RequestParam String bookName, @RequestParam Long bookId) {
+	public List<Book> getAllBooks(@RequestParam(required = false) String bookName,
+			@RequestParam(required = false) Long bookId) {
+		List<Book> list = new ArrayList<Book>();
+
 		if (null != bookId) {
 			list.add( bookService.getBook(bookId));
 			return list;

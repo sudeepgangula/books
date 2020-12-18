@@ -1,6 +1,7 @@
 package com.example.books.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,13 +46,18 @@ public class BookService {
 	}
 
 	public void allocateBook(@RequestParam Long bookId) {
-		Book savedBook = bookRepository.findById(bookId).get();
+		Book savedBook = getBook(bookId);
 		savedBook.setAvailableCopies(savedBook.getAvailableCopies() - 1);
 		bookRepository.save(savedBook);
 	}
 
 	public Book getBook(Long bookId) {
-		return bookRepository.findById(bookId).get();
+		try {
+			return bookRepository.findById(bookId).get();
+		} catch (NoSuchElementException e) {
+			return new Book();
+		}
+
 	}
 
 	public void deleteBook(Long bookId) {
